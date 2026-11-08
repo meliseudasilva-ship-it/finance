@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Pro - Criação de Conteúdo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* gray-100 */
+            color: #1f2937; /* gray-800 */
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+        
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6; /* blue-500 */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <!-- Navbar -->
+    <header class="bg-white border-b border-gray-200 shadow-sm z-10 flex-shrink-0">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>
+                <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">Media Pro</h1>
+            </div>
+            <button id="btnRestartApp" class="hidden text-sm font-medium text-gray-500 hover:text-red-600 transition-colors flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                Reiniciar
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto relative">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-full">
+            
+            <!-- Screen 1: Start -->
+            <div id="screenStart" class="h-full flex flex-col items-center justify-center text-center fade-in max-w-2xl mx-auto">
+                <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                    <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                </div>
+                <h2 class="text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">Crie posts incríveis com IA</h2>
+                <p class="text-lg text-gray-600 mb-8">O Media Pro ajuda você a idealizar, estruturar e gerar imagens profissionais para suas redes sociais em instantes.</p>
+                <button id="btnStart" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 text-lg">
+                    Começar
+                </button>
+            </div>
+
+            <!-- Screen 2: Configuration -->
+            <div id="screenConfig" class="hidden fade-in max-w-3xl mx-auto pb-10">
+                <div class="flex items-center mb-6 gap-3">
+                    <button class="btnBack p-2 text-gray-400 hover:text-gray-700 bg-white rounded-full shadow-sm hover:shadow transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <h2 class="text-2xl font-bold text-gray-800">Configuração do Projeto</h2>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 space-y-8">
+                    
+                    <!-- Platform -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Plataforma & Proporção</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <label class="relative flex flex-col bg-gray-50 border-2 border-transparent rounded-xl p-4 cursor-pointer hover:bg-gray-100 transition focus-within:ring-2 focus-within:ring-blue-500 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
+                                <input type="radio" name="platform" value="instagram" class="sr-only" checked>
+                                <span class="font-medium text-gray-900 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-pink-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                                    Instagram
+                                </span>
+                                <span class="text-sm text-gray-500 mt-1">1:1 (Quadrado)</span>
+                            </label>
+                            
+                            <label class="relative flex flex-col bg-gray-50 border-2 border-transparent rounded-xl p-4 cursor-pointer hover:bg-gray-100 transition focus-within:ring-2 focus-within:ring-blue-500 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
+                                <input type="radio" name="platform" value="tiktok" class="sr-only">
+                                <span class="font-medium text-gray-900 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1.04-.1z"/></svg>
+                                    TikTok/Reels
+                                </span>
+                                <span class="text-sm text-gray-500 mt-1">9:16 (Vertical)</span>
+                            </label>
+
+                            <label class="relative flex flex-col bg-gray-50 border-2 border-transparent rounded-xl p-4 cursor-pointer hover:bg-gray-100 transition focus-within:ring-2 focus-within:ring-blue-500 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
+                                <input type="radio" name="platform" value="youtube" class="sr-only">
+                                <span class="font-medium text-gray-900 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                                    YouTube
+                                </span>
+                                <span class="text-sm text-gray-500 mt-1">16:9 (Paisagem)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Text Settings -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Incluir texto na imagem?</label>
+                            <div class="flex bg-gray-100 rounded-lg p-1 w-full relative">
+                                <button type="button" id="btnTextYes" class="flex-1 py-2 text-sm font-medium rounded-md bg-white shadow text-gray-900 transition-all">Sim</button>
+                                <button type="button" id="btnTextNo" class="flex-1 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 transition-all">Não</button>
+                            </div>
+                        </div>
+
+                        <div id="textStyleContainer" class="transition-opacity">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Estilo do Texto/Visual</label>
+                            <select id="selectStyle" class="block w-full rounded-lg border-gray-300 bg-gray-50 border p-2.5 text-sm focus:border-blue-500 focus:ring-blue-500 outline-none">
+                                <option value="comum">Comum (Básico, direto)</option>
+                                <option value="elegante">Elegante (Minimalista, sofisticado)</option>
+                                <option value="empresarial">Empresarial (Corporativo, profissional)</option>
+                                <option value="instagramavel">Instagramável (Trendy, cores vibrantes)</option>
+                                <option value="humoristico">Humorístico (Meme, divertido)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Topic -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Tópico / Assunto da Publicação</label>
+                        <textarea id="inputTopic" rows="3" class="block w-full rounded-xl border-gray-300 bg-gray-50 border p-3 text-gray-900 focus:border-blue-500 focus:ring-blue-500 outline-none resize-none transition" placeholder="Ex: Dicas de produtividade para desenvolvedores iniciantes trabalhando em home office..."></textarea>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="pt-4 flex justify-end">
+                        <button id="btnGenerateIdeas" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-xl shadow-md transition-all flex items-center gap-2 w-full sm:w-auto justify-center">
+                            Gerar Ideias
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen 3: Ideas -->
+            <div id="screenIdeas" class="hidden fade-in max-w-5xl mx-auto pb-10">
+                <div class="flex items-center mb-8 gap-3">
+                    <button class="btnBack p-2 text-gray-400 hover:text-gray-700 bg-white rounded-full shadow-sm hover:shadow transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <h2 class="text-2xl font-bold text-gray-800">Ideias Geradas</h2>
+                    <span class="ml-auto text-sm bg-blue-100 text-blue-700 py-1 px-3 rounded-full font-medium" id="ideasTopicLabel"></span>
+                </div>
+
+                <div id="ideasContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cards will be injected here -->
+                </div>
+            </div>
+
+            <!-- Screen 4: Post Creation (Image Studio) -->
+            <div id="screenStudio" class="hidden fade-in max-w-6xl mx-auto pb-10 h-full flex flex-col">
+                <div class="flex items-center mb-6 gap-3 flex-shrink-0">
+                    <button class="btnBack p-2 text-gray-400 hover:text-gray-700 bg-white rounded-full shadow-sm hover:shadow transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <h2 class="text-2xl font-bold text-gray-800">Estúdio de Criação</h2>
+                </div>
+
+                <div class="flex flex-col lg:flex-row gap-8 flex-1 min-h-0">
+                    <!-- Left: Post Info -->
+                    <div class="lg:w-1/3 flex flex-col gap-4 overflow-y-auto pr-2">
+                        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                            <h3 class="font-bold text-lg text-gray-900 mb-2" id="studioIdeaTitle">Título</h3>
+                            <p class="text-sm text-gray-600 mb-4 leading-relaxed" id="studioIdeaDesc">Descrição</p>
+                            
+                            <div class="space-y-2 border-t pt-4">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-500">Plataforma:</span>
+                                    <span class="font-medium text-gray-800 capitalize" id="studioPlat"></span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-500">Texto na imagem:</span>
+                                    <span class="font-medium text-gray-800" id="studioWithText"></span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-500">Estilo visual:</span>
+                                    <span class="font-medium text-gray-800 capitalize" id="studioStyle"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="btnCreateImage" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            Criar Imagem
+                        </button>
+                        
+                        <div id="imageActions" class="hidden flex-col gap-3 mt-2">
+                            <button id="btnEditImage" class="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                Editar Imagem
+                            </button>
+                            <button id="btnRemakeImage" class="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                Refazer Imagem
+                            </button>
+                            <a id="btnDownloadImage" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer text-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                Baixar Imagem
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right: Canvas/Preview -->
+                    <div class="lg:w-2/3 bg-gray-200 rounded-3xl overflow-hidden flex items-center justify-center relative min-h-[400px] border border-gray-300 shadow-inner" id="imagePreviewContainer">
+                        
+                        <!-- Placeholder -->
+                        <div id="previewPlaceholder" class="text-gray-400 flex flex-col items-center">
+                            <svg class="w-16 h-16 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <span class="text-sm font-medium">A imagem gerada aparecerá aqui</span>
+                        </div>
+
+                        <!-- Actual Image -->
+                        <img id="generatedImg" class="hidden max-w-full max-h-full object-contain shadow-lg transition-opacity duration-300" alt="Imagem Gerada">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Global Full Screen Loader Overlay -->
+    <div id="loaderOverlay" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 hidden items-center justify-center flex-col gap-4">
+        <div class="loader"></div>
+        <p class="text-gray-700 font-medium" id="loaderText">Processando...</p>
+    </div>
+
+    <!-- Modal: Edit Image -->
+    <div id="modalEdit" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4 fade-in">
+        <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Editar Imagem</h3>
+                <p class="text-sm text-gray-600 mb-4">O que você gostaria de alterar na imagem atual?</p>
+                <textarea id="inputEditPrompt" rows="3" class="block w-full rounded-xl border-gray-300 bg-gray-50 border p-3 text-gray-900 focus:border-blue-500 focus:ring-blue-500 outline-none resize-none" placeholder="Ex: Remova o fundo, adicione um gato, mude a cor predominante para vermelho..."></textarea>
+            </div>
+            <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t border-gray-100">
+                <button id="btnCancelEdit" class="px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg font-medium transition">Cancelar</button>
+                <button id="btnConfirmEdit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-sm transition">Aplicar Edição</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Restart Warning -->
+    <div id="modalRestart" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4 fade-in">
+        <div class="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl text-center">
+            <div class="p-6">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Atenção!</h3>
+                <p class="text-sm text-gray-600">Tem certeza que deseja reiniciar? Todo o progresso do projeto atual, configurações e a imagem gerada <b>serão perdidos</b>.</p>
+            </div>
+            <div class="bg-gray-50 px-6 py-4 flex justify-center gap-3 border-t border-gray-100">
+                <button id="btnCancelRestart" class="flex-1 px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-100 rounded-xl font-medium transition">Cancelar</button>
+                <button id="btnConfirmRestart" class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium shadow-sm transition">Sim, reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API KEY IS EMPTY AS REQUESTED FOR CANVAS RUNTIME
+        const apiKey = "";
+        
+        // App State
+        let appState = {
+            currentStep: 'start',
+            project: {
+                platform: 'instagram', // instagram, tiktok, youtube
+                withText: true,
+                textStyle: 'comum',
+                topic: ''
+            },
+            ideas: [],
+            selectedIdea: null,
+            imageHistory: [] // To store multi-turn image generation context
+        };
+
+        // DOM Elements
+        const screens = {
+            start: document.getElementById('screenStart'),
+            config: document.getElementById('screenConfig'),
+            ideas: document.getElementById('screenIdeas'),
+            studio: document.getElementById('screenStudio')
+        };
+        const btnRestartApp = document.getElementById('btnRestartApp');
+        const loaderOverlay = document.getElementById('loaderOverlay');
+        const loaderText = document.getElementById('loaderText');
+
+        // Flow Functions
+        function navigateTo(step) {
+            // Hide all
+            Object.values(screens).forEach(el => el.classList.add('hidden'));
+            
+            // Show target
+            screens[step].classList.remove('hidden');
+            appState.currentStep = step;
+
+            // Header restart button visibility
+            if(step === 'start') {
+                btnRestartApp.classList.add('hidden');
+            } else {
+                btnRestartApp.classList.remove('hidden');
+            }
+
+            // Specific step triggers
+            if(step === 'ideas') renderIdeas();
+            if(step === 'studio') renderStudio();
+        }
+
+        function showLoader(text = "Processando...") {
+            loaderText.innerText = text;
+            loaderOverlay.style.display = 'flex';
+        }
+
+        function hideLoader() {
+            loaderOverlay.style.display = 'none';
+        }
+
+        // --- Screen 1: Start ---
+        document.getElementById('btnStart').addEventListener('click', () => navigateTo('config'));
+
+        // --- Screen 2: Config ---
+        const btnTextYes = document.getElementById('btnTextYes');
+        const btnTextNo = document.getElementById('btnTextNo');
+        const textStyleContainer = document.getElementById('textStyleContainer');
+        const inputTopic = document.getElementById('inputTopic');
+        const btnGenerateIdeas = document.getElementById('btnGenerateIdeas');
+
+        btnTextYes.addEventListener('click', () => {
+            appState.project.withText = true;
+            btnTextYes.className = 'flex-1 py-2 text-sm font-medium rounded-md bg-white shadow text-gray-900 transition-all';
+            btnTextNo.className = 'flex-1 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 transition-all';
+            textStyleContainer.classList.remove('opacity-50', 'pointer-events-none');
+        });
+
+        btnTextNo.addEventListener('click', () => {
+            appState.project.withText = false;
+            btnTextNo.className = 'flex-1 py-2 text-sm font-medium rounded-md bg-white shadow text-gray-900 transition-all';
+            btnTextYes.className = 'flex-1 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 transition-all';
+            textStyleContainer.classList.add('opacity-50', 'pointer-events-none');
+        });
+
+        btnGenerateIdeas.addEventListener('click', async () => {
+            const platform = document.querySelector('input[name="platform"]:checked').value;
+            const style = document.getElementById('selectStyle').value;
+            const topic = inputTopic.value.trim();
+
+            if(!topic) {
+                // Flash input if empty instead of alert
+                inputTopic.classList.add('ring-2', 'ring-red-500');
+                setTimeout(() => inputTopic.classList.remove('ring-2', 'ring-red-500'), 1000);
+                return;
+            }
+
+            appState.project.platform = platform;
+            appState.project.textStyle = style;
+            appState.project.topic = topic;
+
+            await generateIdeasWithAI();
+        });
+
+        // Generate Ideas using Gemini 3 Flash Preview via json schema
+        async function generateIdeasWithAI() {
+            showLoader("Gerando ideias criativas...");
+            
+            const prompt = `Atue como um estrategista de mídia social e designer. O usuário quer criar uma publicação para ${appState.project.platform}. 
+            O tema é: "${appState.project.topic}". 
+            A imagem ${appState.project.withText ? `terá texto com estilo ${appState.project.textStyle}` : 'NÃO terá texto visível'}.
+            Gere 3 ideias diferentes e criativas para essa publicação.
+            Retorne em formato JSON.`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "ARRAY",
+                        items: {
+                            type: "OBJECT",
+                            properties: {
+                                "title": { "type": "STRING", "description": "Título curto da ideia (ex: Dica Prática, Reflexão, etc)" },
+                                "description": { "type": "STRING", "description": "Descrição do que é a publicação e o que será escrito no post." },
+                                "imagePrompt": { "type": "STRING", "description": "Prompt hiper detalhado em inglês para gerar uma imagem relacionada, especificando estética, iluminação, cores." }
+                            },
+                            "propertyOrdering": ["title", "description", "imagePrompt"]
+                        }
+                    }
+                }
+            };
+
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await res.json();
+                if(result.candidates && result.candidates[0].content) {
+                    const jsonText = result.candidates[0].content.parts[0].text;
+                    appState.ideas = JSON.parse(jsonText);
+                    navigateTo('ideas');
+                } else {
+                    throw new Error("Resposta inválida da IA");
+                }
+            } catch (e) {
+                console.error("Erro ao gerar ideias", e);
+                // Fallback silencioso visual
+                alertCustom("Erro ao se conectar com a inteligência artificial. Tente novamente.");
+            } finally {
+                hideLoader();
+            }
+        }
+
+        // --- Screen 3: Ideas ---
+        function renderIdeas() {
+            document.getElementById('ideasTopicLabel').innerText = appState.project.topic.substring(0, 30) + (appState.project.topic.length > 30 ? '...' : '');
+            const container = document.getElementById('ideasContainer');
+            container.innerHTML = '';
+
+            appState.ideas.forEach((idea, index) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl border border-gray-200 p-6 flex flex-col shadow-sm hover:shadow-md transition-shadow h-full';
+                card.innerHTML = `
+                    <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center mb-4 text-indigo-600 font-bold">
+                        ${index + 1}
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-900 mb-2">${idea.title}</h3>
+                    <p class="text-sm text-gray-600 mb-6 flex-1">${idea.description}</p>
+                    <button class="btnSelectIdea w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold py-2.5 rounded-xl transition" data-index="${index}">
+                        Criar esta publicação
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+
+            // Attach events
+            document.querySelectorAll('.btnSelectIdea').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const idx = e.target.getAttribute('data-index');
+                    appState.selectedIdea = appState.ideas[idx];
+                    navigateTo('studio');
+                });
+            });
+        }
+
+        // --- Screen 4: Studio (Image Gen) ---
+        const imgEl = document.getElementById('generatedImg');
+        const imgPlaceholder = document.getElementById('previewPlaceholder');
+        const imgContainer = document.getElementById('imagePreviewContainer');
+        const actionsContainer = document.getElementById('imageActions');
+        const btnCreateImage = document.getElementById('btnCreateImage');
+
+        function renderStudio() {
+            document.getElementById('studioIdeaTitle').innerText = appState.selectedIdea.title;
+            document.getElementById('studioIdeaDesc').innerText = appState.selectedIdea.description;
+            
+            const platMap = { instagram: 'Instagram (1:1)', tiktok: 'TikTok (9:16)', youtube: 'YouTube (16:9)' };
+            document.getElementById('studioPlat').innerText = platMap[appState.project.platform];
+            document.getElementById('studioWithText').innerText = appState.project.withText ? 'Sim' : 'Não';
+            document.getElementById('studioStyle').innerText = appState.project.withText ? appState.project.textStyle : '-';
+
+            // Reset image view if entering fresh
+            if(appState.imageHistory.length === 0) {
+                imgEl.classList.add('hidden');
+                imgEl.src = '';
+                imgPlaceholder.classList.remove('hidden');
+                actionsContainer.classList.add('hidden');
+                btnCreateImage.classList.remove('hidden');
+                
+                // Adjust placeholder shape based on platform
+                imgContainer.style.aspectRatio = getAspectRatioClass(appState.project.platform);
+            }
+        }
+
+        function getAspectRatioClass(platform) {
+            switch(platform) {
+                case 'instagram': return '1 / 1';
+                case 'tiktok': return '9 / 16';
+                case 'youtube': return '16 / 9';
+                default: return '1 / 1';
+            }
+        }
+        
+        function getApiAspectRatio(platform) {
+            switch(platform) {
+                case 'instagram': return '1:1';
+                case 'tiktok': return '9:16';
+                case 'youtube': return '16:9';
+                default: return '1:1';
+            }
+        }
+
+        btnCreateImage.addEventListener('click', async () => {
+            await generateImage(false);
+        });
+
+        document.getElementById('btnRemakeImage').addEventListener('click', async () => {
+            // Remake wipes history but keeps idea
+            appState.imageHistory = [];
+            await generateImage(false);
+        });
+
+        // Image Generation Logic (Initial & Multi-turn edit)
+        async function generateImage(isEdit = false, editPrompt = "") {
+            showLoader(isEdit ? "Aplicando edições..." : "Criando arte visual incrível...");
+            
+            let payload = {
+                generationConfig: {
+                    responseModalities: ['IMAGE'],
+                    imageConfig: { aspectRatio: getApiAspectRatio(appState.project.platform) }
+                }
+            };
+
+            let chatHistory = appState.imageHistory;
+
+            if(!isEdit) {
+                // Build initial prompt
+                let basePrompt = `Crie uma imagem de alta qualidade. Tema base: ${appState.selectedIdea.imagePrompt}. `;
+                if(appState.project.withText) {
+                    basePrompt += ` A imagem deve incluir um texto visualmente atraente no estilo de tipografia: ${appState.project.textStyle}. O texto deve estar legível e harmônico com a composição. Título sugerido para o texto: "${appState.selectedIdea.title}".`;
+                } else {
+                    basePrompt += ` A imagem NÃO deve conter nenhum texto, tipografia, letras ou fontes visíveis. Apenas a arte gráfica limpa.`;
+                }
+                
+                chatHistory = [
+                    { role: 'user', parts: [{ text: basePrompt }] }
+                ];
+            } else {
+                // Editing existing
+                chatHistory.push({ role: 'user', parts: [{ text: editPrompt }] });
+            }
+
+            payload.contents = chatHistory;
+
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=${apiKey}`;
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await res.json();
+                
+                const part = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+                if(part) {
+                    const imageUrl = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+                    
+                    // Display image
+                    imgEl.src = imageUrl;
+                    imgEl.classList.remove('hidden');
+                    imgPlaceholder.classList.add('hidden');
+                    
+                    // Toggle Buttons
+                    btnCreateImage.classList.add('hidden');
+                    actionsContainer.classList.remove('hidden');
+                    actionsContainer.classList.add('flex');
+
+                    // Setup Download
+                    const btnDownload = document.getElementById('btnDownloadImage');
+                    btnDownload.href = imageUrl;
+                    btnDownload.download = `MediaPro_${appState.project.platform}_${Date.now()}.jpeg`;
+
+                    // Update History for next edits
+                    if(!isEdit) {
+                        appState.imageHistory = chatHistory;
+                        appState.imageHistory.push(result.candidates[0].content); // Add model response
+                    } else {
+                        appState.imageHistory.push(result.candidates[0].content);
+                    }
+                } else {
+                    throw new Error("Imagem não retornada");
+                }
+            } catch (e) {
+                console.error("Erro na imagem", e);
+                // Silently fails in UI or custom alert (simulated)
+                alertCustom("Falha ao gerar a imagem. Verifique o prompt ou tente novamente.");
+                if(isEdit) {
+                    appState.imageHistory.pop(); // remove failed prompt
+                }
+            } finally {
+                hideLoader();
+            }
+        }
+
+        // --- Back Buttons Logic ---
+        document.querySelectorAll('.btnBack').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if(appState.currentStep === 'config') navigateTo('start');
+                else if(appState.currentStep === 'ideas') navigateTo('config');
+                else if(appState.currentStep === 'studio') navigateTo('ideas');
+            });
+        });
+
+        // --- Modals (Edit & Restart) ---
+        const modalEdit = document.getElementById('modalEdit');
+        const modalRestart = document.getElementById('modalRestart');
+
+        // Edit
+        document.getElementById('btnEditImage').addEventListener('click', () => {
+            document.getElementById('inputEditPrompt').value = '';
+            modalEdit.classList.remove('hidden');
+            modalEdit.classList.add('flex');
+        });
+
+        document.getElementById('btnCancelEdit').addEventListener('click', () => {
+            modalEdit.classList.add('hidden');
+            modalEdit.classList.remove('flex');
+        });
+
+        document.getElementById('btnConfirmEdit').addEventListener('click', async () => {
+            const prompt = document.getElementById('inputEditPrompt').value.trim();
+            if(!prompt) return;
+            modalEdit.classList.add('hidden');
+            modalEdit.classList.remove('flex');
+            await generateImage(true, prompt);
+        });
+
+        // Restart
+        btnRestartApp.addEventListener('click', () => {
+            modalRestart.classList.remove('hidden');
+            modalRestart.classList.add('flex');
+        });
+
+        document.getElementById('btnCancelRestart').addEventListener('click', () => {
+            modalRestart.classList.add('hidden');
+            modalRestart.classList.remove('flex');
+        });
+
+        document.getElementById('btnConfirmRestart').addEventListener('click', () => {
+            modalRestart.classList.add('hidden');
+            modalRestart.classList.remove('flex');
+            
+            // Reset state completely
+            appState = {
+                currentStep: 'start',
+                project: { platform: 'instagram', withText: true, textStyle: 'comum', topic: '' },
+                ideas: [],
+                selectedIdea: null,
+                imageHistory: []
+            };
+            
+            // Reset UI inputs
+            document.getElementById('inputTopic').value = '';
+            document.querySelector('input[name="platform"][value="instagram"]').checked = true;
+            btnTextYes.click(); 
+            document.getElementById('selectStyle').value = 'comum';
+
+            navigateTo('start');
+        });
+
+        // Custom brief notification instead of alert() for errors
+        function alertCustom(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg z-[100] fade-in text-sm font-medium';
+            toast.innerText = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+    </script>
+</body>
+</html>
